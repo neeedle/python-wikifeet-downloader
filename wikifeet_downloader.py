@@ -25,6 +25,7 @@ class JSONExtractor:
         self.text = text
 
     def get_json_dict(self):
+        # pinpointing the exact location of the json dictionary containing the picture ids
         start_index = self.text.find(self.js_variable)
         start_index = start_index + len(self.js_variable) - 1
         end_index = self.text.find(';', start_index)
@@ -63,6 +64,7 @@ class JPGDownloader:
             print("Error: {}".format(r.status_code))
 
 
+# pid = picture id, used later to build a link to the picture itself
 def build_pid_list(json_dict):
     pids = []
     for index, element in enumerate(json_dict):
@@ -71,13 +73,11 @@ def build_pid_list(json_dict):
 
     return pids
 
-def create_download_path(name):
-    download_path = os.path.join(os.getcwd(), model_name)
-    if not os.path.exists(download_path):
-        os.mkdir(download_path)
 
 if __name__=="__main__":
     try:
+
+        # obtaining arguments from command line 
         parser = argparse.ArgumentParser()
 
         parser.add_argument("url")
@@ -85,33 +85,45 @@ if __name__=="__main__":
 
         args = parser.parse_args()
         url = args.url
+
+        # get model name from the link ending
         model_name = url.split('/')[-1]
 
 
+        # if link looks like a wikifeet.com one, proceed
         if re.search(wikifeet_pattern, url):
             r = requests.get(url, non_bot_header)
 
+            # checking if the link is actually valid, and if we can obtain (GET) the page
             if r.status_code == 200:
+
+                # begin extracting procedure on downloaded page
                 json_extractor = JSONExtractor(r.text)
                 extracted_json = json_extractor.get_json_dict()
 
                 pids = build_pid_list(extracted_json)
                 link_builder = LinkBuilder(model_name)
 
+                # deciding where to put downloaded pictures
                 if args.download_path:
                     if os.path.exists(args.download_path):
-                        jpgdownloader = JPGDownloader(args.download_path)
+                        download_path = args.download_path
                     else:
                         print("Path does not exist, it will be created")
                         os.mkdir(args.download_path)
                         print(args.download_path)
-                        jpgdownloader = JPGDownloader(args.download_path)
+                        download_path = args.download_path
                 else:
                     download_path = os.path.join(os.getcwd(), model_name)
                     if not os.path.exists(download_path):
                         os.mkdir(download_path)
-                    jpgdownloader = JPGDownloader(download_path)
-                    
+                
+                # now we're ready to go
+                jpgdownloader = JPGDownloader(download_path)
+
+                # download every picture by building the link with a pid first, 
+                # then feeding it to the JPGDownloader object "download_image" method;
+                # progress is expressed in % points
                 for index, pid in enumerate(pids):
                     link = link_builder.build_link(pid)
                     jpgdownloader.download_image(link)
