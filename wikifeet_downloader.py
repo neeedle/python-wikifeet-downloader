@@ -44,7 +44,7 @@ class LinkBuilder:
         self.model = model.replace('_', '-')
 
     def build_link(self, pid):
-        return "https://pics.wikifeet.com/" + self.model + "-Feet-" + pid + ".jpg"
+        return "https://pics.wikifeet.com/" + self.model + "-Feet-" + str(pid) + ".jpg"
 
 
 # JPGDownloader class can download a picture from any given link to a specified path
