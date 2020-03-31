@@ -1,6 +1,6 @@
 # python-wikifeet-downloader
 
-Simple tool to download all pictures from a model page on www.wikifeet.com
+Simple tool to download all pictures from a model page on www.wikifeet.com or www.wikifeetx.com
 
 ## Usage
 
