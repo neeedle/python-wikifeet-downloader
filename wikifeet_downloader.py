@@ -9,7 +9,7 @@ import sys
 non_bot_header = {'User-Agent': 'Mozilla/5.0'}
 
 # patterns used to recognize if given url is a valid wikifeet or wikifeetx one
-wikifeet_pattern = 'https:\/\/(www\.)?(wikifeet|wikifeetx)\.com\/.+'
+wikifeet_pattern = 'https:\/\/(www\.)?(wikifeet|wikifeetx|men\.wikifeet)\.com\/.+'
 
 # JSONExtractor class extracts the javascript associative array found in every model html page;
 # it contains a lists of every model feet pic and can be interpreted as json data
